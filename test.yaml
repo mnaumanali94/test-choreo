@@ -1,0 +1,369 @@
+openapi: 3.1.0
+x-stoplight:
+  id: op1bsdlatrbki
+info:
+  title: My API
+  version: '1.0'
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  '/users/{userId}':
+    parameters:
+      - schema:
+          type: integer
+        name: userId
+        in: path
+        required: true
+        description: Id of an existing user.
+    get:
+      summary: Get User Info by User ID
+      tags: []
+      responses:
+        '404':
+          description: User Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressDetailedObject'
+      operationId: get-users-userId
+      description: Retrieve the information of the user with the matching user ID.
+    patch:
+      summary: ''
+      operationId: patch-users-userId
+      responses:
+        '200':
+          $ref: '#/components/responses/responsetest'
+components:
+  schemas:
+    User:
+      title: User
+      type: object
+      description: ''
+      examples:
+        - id: 142
+          firstName: Alice
+          lastName: Smith
+          email: alice.smith@gmail.com
+          dateOfBirth: '1997-10-31'
+          emailVerified: true
+          signUpDate: '2019-08-24'
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the given user.
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        dateOfBirth:
+          type: string
+          format: date
+          example: '1997-10-31'
+        emailVerified:
+          type: boolean
+          description: Set to true if the user's email has been verified.
+        createDate:
+          type: string
+          format: date
+          description: The date that the user was created.
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
+        - emailVerified
+    AddressAdditions:
+      description: Object including address properties
+      x-stoplight:
+        id: i4wblzbicbj7t
+      title: addressAdditions
+      type: object
+      x-tags:
+        - Customer
+      properties:
+        shippingAddress:
+          $ref: '#/components/schemas/ShippingAddressAdditions'
+          x-stoplight:
+            id: 7hem6xznzwgzz
+        addressValidationServiceProvider:
+          type: string
+          example: Incognia
+          description: Contains the party or service which was used for address confirmation purposes
+          x-stoplight:
+            id: a45z7x4q1e8bx
+        undeliverableReason:
+          type: string
+          example: Deceased
+          description: You can put the reason for non-delivery to the address in this field (usually relates to the PO box).
+          x-stoplight:
+            id: mxmcq4byuwke8
+    AddressCreateObject:
+      x-stoplight:
+        id: 2zknka90ot2jx
+      title: addressCreateObject
+      type: object
+      x-tags:
+        - Customer
+      description: Defines Axxiome Digital address model (including both structured and unstructrured data format) for entries to be created or updated.
+      examples: []
+      properties:
+        type:
+          type: string
+          description: 'Address usage type (Shipping address, permanent address, holiday address)'
+          enum:
+            - Correspondence Address
+            - BankStatement Address
+            - Alternative Address
+            - Secondary Address
+            - Permanent Residence Address
+            - Physical Address
+            - CPA Address
+          example: Correspondence Address
+          x-stoplight:
+            id: nn6wlum5caomp
+        default:
+          type: boolean
+          x-stoplight:
+            id: 8vogcjpfi0w4v
+          description: Default flag selected determines which address should be used in case there are multiple of the same type defined for a customer.
+        validity:
+          $ref: '#/components/schemas/Validity'
+          description: Validity of this address
+          x-stoplight:
+            id: lcg5s7g55bmp8
+        structuredAddress:
+          $ref: '#/components/schemas/AddressStructured'
+          description: Address stuctured data (components defined as single fields)
+          x-stoplight:
+            id: dfigiastqnwhv
+        unstructuredAddress:
+          $ref: '#/components/schemas/AddressUnstructured'
+          description: Address unstructured data (components defined as lines)
+          x-stoplight:
+            id: bmg8ktkupobyg
+        additions:
+          $ref: '#/components/schemas/AddressAdditions'
+          description: Object including address properties
+          x-stoplight:
+            id: i4wblzbicbj7t
+      required:
+        - type
+    AddressDetailedObject:
+      title: addressDetailedObject
+      x-stoplight:
+        id: 6saqvqdomxoov
+      x-tags:
+        - Customer
+      description: Defines Axxiome Digital address model (including both structured and unstructrured data format) for existing data.
+      allOf:
+        - type: object
+          properties:
+            addressId:
+              type: string
+              example: '88888888888888888'
+              description: Address system key (unique identifier)
+              x-stoplight:
+                id: xqb9jntmfo8gt
+          required:
+            - addressId
+          x-stoplight:
+            id: 6x8l2p20xgci0
+        - $ref: '#/components/schemas/AddressCreateObject'
+          x-stoplight:
+            id: 2zknka90ot2jx
+    AddressStructured:
+      description: Address stuctured data (components defined as single fields)
+      x-stoplight:
+        id: dfigiastqnwhv
+      title: addressStructured
+      type: object
+      x-tags:
+        - Customer
+      properties:
+        country:
+          type: string
+          example: US
+          description: Country ISO code
+          x-stoplight:
+            id: l37238pn16vd0
+        countrySubDivision:
+          type: string
+          example: NY
+          description: 'The highest level of a country''s administrative division (e.g. state, state, canton, county)'
+          x-stoplight:
+            id: pc6mt31use13z
+        districtName:
+          type: string
+          example: New York City
+          description: 'Identifies a subdivision within a country sub-division. Second level of a country''s administrative division (e.g. county, landkreis)'
+          x-stoplight:
+            id: 759vhrxc1t25m
+        townName:
+          type: string
+          example: New York
+          description: Town / City name
+          x-stoplight:
+            id: 93inukkpv3y75
+        postCode:
+          type: string
+          example: '10036'
+          description: 'Postal Code (mask dependent on country): dentifier consisting of a group of letters and/or numbers that is added to a postal address to assist the sorting of mail.'
+          x-stoplight:
+            id: 0zprocwgwc8fv
+        streetName:
+          type: string
+          example: Park Avenue
+          description: 'Street: Name of a street or thoroughfare.'
+          x-stoplight:
+            id: 27y423yj5dv70
+        building:
+          $ref: '#/components/schemas/Building'
+          x-stoplight:
+            id: 3pfj9f8f4eu8b
+        room:
+          type: string
+          example: 23C
+          description: 'Room: Flat/Appartment number.'
+          x-stoplight:
+            id: 9pz4ud6huq4w9
+        postBox:
+          $ref: '#/components/schemas/PostBox'
+          description: 'The delivery service is part of the PO box address. Some countries offer different services in addition to regular postal delivery and PO boxes, for example the Private Bag or Response Bag. If an address is related to one of these delivery services, the information about this particular delivery service has to be entered in the corresponding fields.'
+          x-stoplight:
+            id: x11e75nt3esmg
+        careOf:
+          type: string
+          example: 'Anna Black c/o New-Company,  Inc.'
+          description: C/O - care of. This abbreviation is used in addresses when you are sending a letter or package to a person by using someone else's address or the address of a company.
+          x-stoplight:
+            id: 1ixt8w5t0lozl
+        floor:
+          type: string
+          example: '2'
+          description: Floor or storey within a building.
+          x-stoplight:
+            id: p0abp1xs2w06f
+        department:
+          type: string
+          example: River Terrace
+          description: Secondary address unit designator - identification of a division of a large organisation or building.
+          x-stoplight:
+            id: 8y8t3ix0eg5lw
+        subDepartment:
+          type: string
+          example: River House
+          description: Identification of a sub-division of a large organisation or building.
+          x-stoplight:
+            id: uzivj3iuqbwo2
+    AddressUnstructured:
+      description: Address unstructured data (components defined as lines)
+      x-stoplight:
+        id: bmg8ktkupobyg
+      title: addressUnstructured
+      type: object
+      x-tags:
+        - Customer
+      properties:
+        addressLines:
+          type: array
+          minItems: 0
+          maxItems: 5
+          example:
+            - 505 Park Avenue 23C
+            - 10022 New York
+          description: 'Address presented as list of lines (e.g. Address Line 1, Address Line 2 usually up to 5). Consistency depends on the address specification (PO box, personal, company) and national post regulations'
+          items:
+            x-stoplight:
+              id: kd74t0qvrf8j3
+          x-stoplight:
+            id: fdnut3mvudrz7
+        country:
+          type: string
+          example: US
+          description: Country ISO code
+          x-stoplight:
+            id: 0ifle4r6527jy
+    Building:
+      x-stoplight:
+        id: 3pfj9f8f4eu8b
+      title: building
+      type: object
+      x-tags:
+        - Customer
+      description: building details of an address
+      properties:
+        number:
+          type: string
+          example: '505'
+          description: Number that identifies the position of a building on a street.
+          x-stoplight:
+            id: sly7c26aq35cs
+        name:
+          type: string
+          example: River Terrace
+          description: Name of the building or house.
+          x-stoplight:
+            id: iiqrdtpdpmk1p
+    PostBox:
+      description: 'The delivery service is part of the PO box address. Some countries offer different services in addition to regular postal delivery and PO boxes, for example the Private Bag or Response Bag. If an address is related to one of these delivery services, the information about this particular delivery service has to be entered in the corresponding fields.'
+      x-stoplight:
+        id: x11e75nt3esmg
+      title: postBox
+      type: object
+      x-tags:
+        - Customer
+      properties:
+        number:
+          type: string
+          example: '543745748'
+          description: 'Numbered box in a post office, assigned to a person or organisation, where letters are kept until called for.'
+          x-stoplight:
+            id: g2lci165f7ch1
+        deliveryType:
+          type: string
+          example: Locket Bag
+          description: 'The delivery service is part of the PO box address. Some countries offer different services in addition to regular postal delivery and PO boxes, for example the Private Bag or Response Bag. If an address is related to one of these delivery services, the information about this particular delivery service has to be entered in the corresponding fields.'
+          x-stoplight:
+            id: la52qjhh9resm
+    ShippingAddressAdditions:
+      x-stoplight:
+        id: 7hem6xznzwgzz
+      title: shippingAddressAdditions
+      type: object
+      x-tags:
+        - Customer
+      description: Defines Axxiome Digital model including data specific for correspondence shipping.
+      properties:
+        name:
+          type: string
+          example: Anna Lorenzo Black
+          description: Name by which a party is known and which is usually used to identify that party.
+          x-stoplight:
+            id: 11odqtxzu4m3d
+        phoneNumber:
+          $ref: '#/components/schemas/PhoneNumber'
+          x-stoplight:
+            id: z5ciixm9uw8zg
+    PhoneNumber:
+      x-stoplight:
+        id: z5ciixm9uw8zg
+      __ERROR__: |-
+        Error: Error getting file "/phoneNumber.yaml". 
+        '/phoneNumber.yaml' not found.
+    Validity:
+      description: Validity of this address
+      x-stoplight:
+        id: lcg5s7g55bmp8
+      __ERROR__: |-
+        Error: Error getting file "/validity.yaml". 
+        '/validity.yaml' not found.
+  responses:
+    responsetest:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AddressDetailedObject'
